@@ -1,0 +1,107 @@
+{% extends 'tickets/index.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'tickets/styles/tickets.css' %}">
+{% endblock %}
+
+{% block content %}
+    <section class="ticket-container">
+        <!-- Title Section -->
+        <div class="title">
+            <h1>All Queries</h1>
+        </div>
+
+        <!-- Search and Filters Section -->
+        <section class="search-filters">
+            <!-- Status Filters -->
+            <section class="status-filters">
+                <div class="filter-btns">
+                    <button class="filter-btn {% if not request.GET.status %}active{% endif %}">
+                        <a href="{% url 'tickets-view' %}?status=">All ({{ all_count }})</a>
+                    </button>
+                    <button class="filter-btn {% if request.GET.status == 'open' %}active{% endif %}">
+                        <a href="{% url 'tickets-view' %}?status=open">Open ({{ open_count }})</a>
+                    </button>
+                    <button class="filter-btn {% if request.GET.status == 'active' %}active{% endif %}">
+                        <a href="{% url 'tickets-view' %}?status=active">Active ({{ active_count }})</a>
+                    </button>
+                    <button class="filter-btn {% if request.GET.status == 'closed' %}active{% endif %}">
+                        <a href="{% url 'tickets-view' %}?status=closed">Closed ({{ closed_count }})</a>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Search Bar -->
+            <section class="search-bar-container">
+                <form class="search-bar" method="GET" action="{% url 'tickets-view' %}">
+                    <input type="text" name="q" placeholder="Search by query title, ID, or description...">
+                    <button type="submit" aria-label="Search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    {% if request.GET.q %}
+                        <a href="{% url 'tickets-view' %}" class="clear-search" aria-label="Clear Search">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    {% endif %}
+                </form>
+            </section>
+        </section>
+
+        <!-- Ticket List Section -->
+        <section class="ticket-list">
+            <div class="ticket-row header">
+                <div>Query Number</div>
+                <div>Title</div>
+                <div>Description</div>
+                <div>Status</div>
+                <div>Urgency</div>
+                <div>Created By</div>
+                <div>Assigned To</div>
+            </div>
+
+            <!-- Empty State -->
+            {% if not tickets %}
+                <div class="empty-state">
+                    <img src="{% static 'tickets/images/empty-state.svg' %}" alt="No tickets found">
+                    <p>
+                        {% if open_count == 0 %}
+                            There are no open queries.
+                        {% elif request.GET.status == 'active' %}
+                            You have no active tickets.
+                        {% elif closed_count == 0 %}
+                            You have no closed tickets.
+                        {% else %}
+                            No tickets match your search.
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                {% for ticket in tickets %}
+                    <div class="ticket-row">
+                        <div><a href="{% url 'ticket-details' slug=ticket.slug %}">{{ ticket.ticket_id }}</a></div>
+                        <div>{{ ticket.title }}</div>
+                        <div>{{ ticket.description | truncatechars:100 }}</div>
+                        <div><span class="status-badge {{ ticket.status }}">{{ ticket.status }}</span></div>
+                        <div>{{ ticket.urgency | default:"-" }}</div>
+                        <div>{{ ticket.created_by.username }}</div>
+                        <div>{{ ticket.assigned_to.username | default:"-" }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </section>
+
+        <!-- Pagination -->
+        {% if tickets.has_other_pages %}
+            <div class="pagination">
+                {% if tickets.has_previous %}
+                    <a href="?page={{ tickets.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">Previous</a>
+                {% endif %}
+                <span class="current-page">{{ tickets.number }}</span>
+                {% if tickets.has_next %}
+                    <a href="?page={{ tickets.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="page-link">Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'tickets/index.html' %}
+
+{% load static %}
+
+{% block css %} 
+    <link rel="stylesheet" href="{% static  'tickets/styles/home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Smart Potato Farming</h1>
+            <p>Your one-stop solution for potato disease detection.</p>
+            <button><a href="{% url 'account_signup' %}" class="btn-primary">Get Started</a></button>
+        </div>
+        <!-- <img src="{% static '../media/landing-page/hero-bg.png' %}" alt=""> -->
+        <img src="media\landing-page\hero-bg.png" alt="Hero Background" class="hero-bg">
+    </section>
+
+    <section id="about" class="about">
+        <div class="container">
+            <h2> About Smart Potato Farming</h2>
+            <p>Smart Potato Farming is a digital platform designed for small-scale farmers to detect late blight in potato crops early through AI-powered image analysis. Farmers can upload a photo of a potato leaf to instantly check for infection. The platform also includes a chatbot assistant that offers real-time guidance, farming tips, and answers to common questions—making expert help accessible anytime.</p>
+        </div>
+    </section>
+
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <form method="post" action="{% url 'contact' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="sender-name" placeholder="Enter your name" required>
+                    <input type="email" name="sender-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="message-title" placeholder="Title" required>
+                    <textarea name="message-body" id="body" placeholder="Message" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    {% include 'tickets/footer.html'%}
+{% endblock %}

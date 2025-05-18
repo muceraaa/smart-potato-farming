@@ -1,0 +1,321 @@
+/* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
+    color: #374151;
+    margin: 0;
+    padding: 0;
+}
+
+.detail-ticket-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Ticket Header */
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.client-details h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #111827;
+}
+
+.client-details .client-email {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.ticket-info {
+    display: flex;
+    gap: 20px;
+}
+
+.ticket-details {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.ticket-details .label {
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.ticket-details .value {
+    color: #111827;
+}
+
+/* Ticket Content */
+.ticket-content {
+    margin-bottom: 30px;
+}
+
+.ticket-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.ticket-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+.ticket-attachment img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.ai-solution {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+}
+
+.ai-solution h4 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    color: #111827;
+}
+
+.feedback-section {
+    margin-top: 15px;
+}
+
+.feedback-section p {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.rating {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.rating .star {
+    cursor: pointer;
+    color: #e5e7eb;
+    font-size: 1.2rem;
+}
+
+.rating .star:hover,
+.rating .star.active {
+    color: #f59e0b;
+}
+
+.btn-escalate {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-escalate:hover {
+    background-color: #dc2626;
+}
+
+/* Ticket Status and Actions */
+.ticket-status-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.status-badge.open {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-badge.active {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.status-badge.closed {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.action-form .btn-accept,
+.action-form .btn-close {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.action-form .btn-accept {
+    background-color: #10b981;
+    color: white;
+}
+
+.action-form .btn-accept:hover {
+    background-color: #059669;
+}
+
+.action-form .btn-close {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.action-form .btn-close:hover {
+    background-color: #2563eb;
+}
+
+/* Messages Section */
+.message-client-sections {
+    display: flex;
+    gap: 20px;
+}
+
+.messages-section {
+    flex: 2;
+}
+
+.clients-tickets {
+    flex: 1;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.sender-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sender-name {
+    font-weight: 500;
+    color: #111827;
+}
+
+.time-sent {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.message-body p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.delete-form .btn-delete {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.delete-form .btn-delete:hover {
+    background-color: #dc2626;
+}
+
+.message-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    resize: vertical;
+}
+
+.message-form .btn-send {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.message-form .btn-send:hover {
+    background-color: #2563eb;
+}
+
+/* Client's Tickets Section */
+.ticket-list {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ticket-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.ticket-row.header {
+    background-color: #f3f4f6;
+    font-weight: 500;
+}
+
+.ticket-row:last-child {
+    border-bottom: none;
+}
+
+.ticket-row div {
+    flex: 1;
+    text-align: left;
+}
+
+.ticket-row a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.ticket-row a:hover {
+    text-decoration: underline;
+}

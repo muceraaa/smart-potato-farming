@@ -1,0 +1,53 @@
+{% load static %}
+
+{#add css#}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'tickets/styles/navbar.css' %}">
+{% endblock %}
+
+<section class="top-nav">
+    <div class="logo">
+        <a href="{% url 'home' %}">Smart Potato Farming</a>
+    </div>
+
+    <nav class="nav-links">
+        {% if request.user.user_type == 'engineer' %}
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'tickets-view' %}">Tickets</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'engineer-dashboard' user.username %}">Dashboard</a>
+            {% endif %}
+            <a href="{% url 'contact' %}">Contact</a>
+        {% elif request.user.user_type == 'client' %}
+            <a href="{% url 'home' %}">Home</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'client-dashboard' user.username %}">Dashboard</a>
+            {% endif %}
+            <a href="{% url 'contact' %}">Contact</a>
+        {% else %}
+            <a href="{% url 'contact' %}">Contact</a>
+        {% endif %}
+    </nav>
+
+    <section class="auth">
+        {% if user.is_authenticated %}
+            <div class="dropdown">
+                <a href="#" class="avatar avatar--medium active dropdown-toggle">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.username }}" />
+                    {% else %}
+                        <img src="{% static '../media/avatars/default_avatar.svg' %}" alt="{{user.username}}" />
+                    {% endif %}
+                    {{user.username}}
+                </a>
+                <div class="dropdown-menu">
+                    <a href="{% url 'account_change_password' %}">Change Password</a>
+                    <a href="{% url 'account_logout' %}">Logout</a>
+                </div>
+            </div>
+        {% else %}
+            <a href="{% url 'account_login' %}">Login</a>
+            <a href="{% url 'account_signup' %}">Register</a>
+        {% endif %}
+    </section>
+</section>

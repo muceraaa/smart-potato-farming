@@ -1,0 +1,228 @@
+/*< ==================== Engineers Dashboard styles ====================> */
+.dashboard-container {
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.search-filters {
+    display: flex;
+    justify-content: space-around;
+    margin: 25px 0;
+}
+
+.tickets {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ticket-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.ticket-details {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+    width: 350px;
+    color: var(--text-color);
+}
+
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+
+}
+
+.description p {
+    text-align: center;
+}
+
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #007bff;
+}
+
+p {
+    font-size: 14px;
+    color: #555;
+}
+
+
+.filter-btns button:hover, .search-bar button:hover, .create-ticket button:hover, .update-delete button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.ticket-container:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.search-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.status-filters, .search-bar-container, .create-ticket {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-btns {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-btns button {
+    background-color: #007bff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-btns button a {
+    color: white;
+    text-decoration: none;
+}
+
+.search-bar input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 70%;
+}
+
+.search-bar button {
+    padding: 8px 16px;
+    background-color: rgb(24, 145, 24);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.create-ticket button {
+    background-color: #007bff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.create-ticket button a {
+    color: white;
+    text-decoration: none;
+}
+
+.tickets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.ticket-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-details .title h2 a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.ticket-details .status p {
+    background-color: #e9ecef;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.description {
+    margin: 10px 0;
+    color: #333;
+}
+
+.update-delete {
+    display: flex;
+    gap: 10px;
+}
+
+.update-delete button {
+    background-color: rgb(181, 39, 39);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.empty {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+}
+
+.empty a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+
+@media (max-width: 768px) {
+    .search-filters {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter-btns {
+        flex-wrap: wrap;
+    }
+
+    .tickets {
+        grid-template-columns: 1fr;
+    }
+}

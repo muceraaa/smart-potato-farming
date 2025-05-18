@@ -1,0 +1,219 @@
+{% extends 'tickets/index.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'tickets/styles/ticket-details.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- RateYo CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+{% endblock %}
+
+{% block content %}
+    <section class="detail-ticket-container">
+        <!-- Ticket Header -->
+        <section class="ticket-header">
+            <div class="client-details">
+                <h3 class="client-name">{{ ticket.created_by.first_name }} {{ ticket.created_by.last_name }}</h3>
+                <p class="client-email">{{ ticket.created_by.email }}</p>
+            </div>
+            <div class="ticket-info">
+                <div class="ticket-details">
+                    <span class="label">Query Number:</span>
+                    <span class="value">{{ ticket.ticket_id }}</span>
+                </div>
+                <div class="ticket-details">
+                    <span class="label">Created on:</span>
+                    <span class="value">{{ ticket.created_on | date:'F j, Y' }}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ticket Title and Description -->
+        <div class="ticket-content">
+            <h1 class="ticket-title">{{ ticket.title }}</h1>
+            {% if ticket.attachment %}
+                <div class="ticket-attachment">
+                    <img src="{{ ticket.attachment.url }}" alt="Ticket Attachment" class="attachment-image">
+                </div>
+            {% endif %}
+            <p class="ticket-description">{{ ticket.description }}</p>
+            <div class="ai-solution">
+                <h4>AI Suggested Solution</h4>
+                <p>{{ ticket.pred_solution }}</p>
+                <!-- Feedback and Escalation Section -->
+                <div class="feedback-section">
+                    <p>Was this solution helpful?</p>
+                    <div id="rateYo"></div>
+                    <form id="rating-form" method="post" action="{% url 'submit-rating' ticket.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" id="rating-value" name="rating" value="{{ ticket.rating|default:0 }}">
+                        <button type="submit" class="btn-submit-rating">Submit Rating</button>
+                    </form>
+                    <p id="selected-rating">Selected Rating: <span id="rating-display">{{ ticket.rating|default:0 }}</span>/5</p>
+                </div>
+
+                <!-- Escalate to Support Engineer -->
+                <div class="escalation-section">
+                    <p>If the AI's response is unsatisfactory, you can escalate this query to a support engineer.</p>
+                    <button class="btn-escalate" onclick="escalateToEngineer()">Escalate to Support Engineer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Status and Actions -->
+        <div class="ticket-status-actions">
+            <div class="status">
+                <span class="label">Status:</span>
+                <span class="value status-badge">{{ ticket.status }}</span>
+            </div>
+            {% if ticket.status == 'open' and request.user.is_authenticated and request.user.user_type == 'engineer' %}
+                <form method="post" action="{% url 'accept-ticket' slug=ticket.slug %}" class="action-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-accept">Accept Ticket</button>
+                </form>
+            {% elif ticket.status == 'active' %}
+                <div class="assigned-to">
+                    <span class="label">Assigned to:</span>
+                    <span class="value">{{ ticket.assigned_to }}</span>
+                </div>
+            {% endif %}
+            {% if ticket.status == 'active' and request.user.user_type == 'engineer' %}
+                <form method="post" action="{% url 'close-ticket' slug=ticket.slug %}" class="action-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-close">Close Ticket</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- Messages Section -->
+        <div class="message-client-sections">
+            <section class="messages-section">
+                <h4 class="section-title">Messages</h4>
+                {% for ticket_message in msg %}
+                    <div class="message">
+                        <div class="message-header">
+                            <div class="sender-info">
+                                <span class="sender-name">@{{ ticket_message.sender.username }}</span>
+                                <span class="time-sent">{{ ticket_message.sent_on|timesince }} ago</span>
+                            </div>
+                        </div>
+                        <div class="message-body">
+                            <p>{{ ticket_message.message|linebreaksbr|safe }}</p>
+                        </div>
+
+                        {% if ticket_message.sender == request.user %}
+                            <form method="post" action="{% url 'delete-message' msgId=ticket_message.id %}" class="delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="message-form">
+                    <form method="post">
+                        {% csrf_token %}
+                        <textarea name="message" id="message-input" placeholder="Send a message..." rows="4"></textarea>
+                        <button type="submit" class="btn-send">Send</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Client's Tickets Section -->
+            <section class="clients-tickets">
+                <h4 class="section-title">{{ ticket.created_by.first_name }} {{ ticket.created_by.last_name }}'s Tickets</h4>
+                <div class="ticket-list">
+                    <div class="ticket-row header">
+                        <div>Query Number</div>
+                        <div>Title</div>
+                        <div>Status</div>
+                    </div>
+                    <div class="ticket-row">
+                        <div class="ticket-number"><a href="{% url 'ticket-details' slug=ticket.slug %}">{{ ticket.ticket_id }}</a></div>
+                        <div><a href="{% url 'ticket-details' slug=ticket.slug %}">{{ ticket.title }}</a></div>
+                        <div>{{ ticket.status }}</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- Add jQuery and RateYo JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+
+    <!-- JavaScript for Feedback and Escalation -->
+    <script>
+        $(document).ready(function () {
+            console.log("Document is ready. Initializing RateYo...");
+
+            // Initialize RateYo
+            $("#rateYo").rateYo({
+                rating: {{ ticket.rating|default:0 }}, // Set initial rating (default to 0 if undefined)
+                fullStar: true,
+                onSet: function (rating, rateYoInstance) {
+                    console.log("Rating set to:", rating);
+                    // Update hidden input and display
+                    $("#rating-value").val(rating);
+                    $("#rating-display").text(rating);
+                }
+            });
+
+            // Submit Rating Form
+            $("#rating-form").on("submit", function (e) {
+                e.preventDefault(); // Prevent default form submission
+                console.log("Rating form submitted.");
+
+                const formData = new FormData(this);
+                const url = $(this).attr("action");
+
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        "X-CSRFToken": formData.get("csrfmiddlewaretoken"), // Include CSRF token
+                    },
+                    success: function (response) {
+                        console.log("Rating submitted successfully:", response);
+                        alert("Rating submitted successfully!");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Failed to submit rating:", error);
+                        alert("Failed to submit rating. Please try again.");
+                    },
+                });
+            });
+
+            // Escalate to Support Engineer
+            window.escalateToEngineer = function () {
+                if (confirm("Are you sure you want to escalate this ticket to a support engineer?")) {
+                    console.log("Escalating ticket...");
+                    const url = "{% url 'escalate-ticket' ticket.id %}";
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}", // Include CSRF token
+                        },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log("Ticket escalated successfully.");
+                            alert("Ticket escalated to support engineer.");
+                        } else {
+                            console.error("Failed to escalate ticket.");
+                            alert("Failed to escalate ticket. Please try again.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("An error occurred. Please try again.");
+                    });
+                }
+            };
+        });
+    </script>
+{% endblock %}

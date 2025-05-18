@@ -1,0 +1,168 @@
+{% extends 'tickets/index.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'tickets/styles/dashboards.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-container">
+    <div class="title">
+        <h1>Here are your Queries</h1>
+    </div>
+
+    <!-- status filters -->
+    <section class="search-filters">
+        <section class="status-filters">
+            <div class="filter-btns">
+                <button>
+                    <a href="{% url 'client-dashboard' username=request.user.username %}?status=" style="color: white;">All ({{ all_count }})</a>
+                </button>
+                |
+                <button>
+                    <a href="{% url 'client-dashboard' username=request.user.username %}?status=active" style="color: white;">Active ({{ active_count }})</a>
+                </button>
+                |
+                <button>
+                    <a href="{% url 'client-dashboard' username=request.user.username %}?status=closed" style="color: white;">Closed ({{ closed_count }})</a>
+                </button>
+            </div>
+        </section>
+
+        <!-- search bar -->
+        <section class="search-bar-container">
+            <form class="search-bar" method="GET" action="{% url 'tickets-view' %}">
+                <input type="text" name="q" placeholder="Search queries...">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <!-- Create Ticket -->
+        <section class="create-ticket">
+            <form method="post" action="{% url 'create-ticket' %}">
+                {% csrf_token %}
+                <button type="submit"><a href="{% url 'create-ticket' %}" style="color: white;">Add A Query</a></button>
+            </form>
+        </section>
+
+        <!-- Upload Image with Axios -->
+        <section class="upload-image">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" />
+            <button type="button" id="uploadBtn" style="color: white;">Upload an image</button>
+        </section>
+    </section>
+
+    <section class="tickets">
+        {% for ticket in tickets %}
+            <div class="ticket-container">
+                <section class="ticket-details">
+                    <div class="title">
+                        <h2 style="font-size: 25px;">
+                            <a href="{% url 'ticket-details' slug=ticket.slug %}" style="color: rgb(24, 145, 24);">
+                                {{ ticket.title }}
+                            </a>
+                        </h2>
+                    </div>
+                    <section class="status">
+                        <p style="text-align: center;">Status: <b>{{ ticket.status }}</b></p>
+                    </section>
+                    <div class="detail-header">
+                        <div class="created-by">
+                            {% if ticket.assigned_to %}
+                                <p>assigned To: {{ ticket.created_by }}</p>
+                            {% else %}
+                                <p>assigned To: No one yet</p>
+                            {% endif %}
+                        </div>
+                        <div class="date">
+                            <p>Created on: {{ ticket.created_on | date:'F j, Y' }}</p>
+                        </div>
+                    </div>
+                    <section class="description">
+                        <p>{{ ticket.description | truncatechars:100 }}</p>
+                    </section>
+                    <div class="update-delete auth-btns" style="justify-content: space-around; margin: 10px 0;">
+                        <form action="{% url 'delete-ticket' slug=ticket.slug %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link">Delete</button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        {% empty %}
+            <section class="empty" style="display: flex; justify-content: center; align-items: center;">
+                <p>You have no tickets. You can <a href="{% url 'create-ticket' %}" style="color: rgb(201, 14, 201);">Create</a> one</p>
+            </section>
+        {% endfor %}
+    </section>
+</section>
+
+<!-- Modal for Prediction Result -->
+<div id="predictionModal" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999;">
+    <div class="modal-content" style="background: white; padding: 20px; max-width: 400px; margin: 100px auto; border-radius: 10px;">
+        <span id="closeModal" style="float:right; cursor:pointer; font-size: 24px;">&times;</span>
+        <h2>Prediction Result</h2>
+        <img id="previewImage" src="" alt="Uploaded Image" style="max-width: 100%; margin-bottom: 10px;"/>
+        <p><strong>Prediction:</strong> <span id="predictionText"></span></p>
+        <p><strong>Confidence:</strong> <span id="confidenceText"></span>%</p>
+    </div>
+</div>
+
+<!-- Axios Script + Modal Logic -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const predictionModal = document.getElementById('predictionModal');
+    const closeModal = document.getElementById('closeModal');
+    const predictionText = document.getElementById('predictionText');
+    const confidenceText = document.getElementById('confidenceText');
+    const previewImage = document.getElementById('previewImage');
+
+    uploadBtn.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', async () => {
+        if (imageInput.files.length > 0) {
+            const file = imageInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Preview image before upload
+            const reader = new FileReader();
+            reader.onload = () => {
+                previewImage.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+
+            try {
+                const response = await axios.post("{% url 'upload-image' %}", formData, {
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                predictionText.textContent = response.data.prediction;
+                confidenceText.textContent = response.data.confidence;
+                predictionModal.style.display = 'block';
+
+            } catch (error) {
+                alert('Image upload failed.');
+                console.error(error);
+            }
+        }
+    });
+
+    closeModal.addEventListener('click', () => {
+        predictionModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === predictionModal) {
+            predictionModal.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
