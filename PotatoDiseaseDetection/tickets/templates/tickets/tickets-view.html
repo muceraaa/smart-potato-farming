@@ -63,16 +63,16 @@
             <!-- Empty State -->
             {% if not tickets %}
                 <div class="empty-state">
-                    <img src="{% static 'tickets/images/empty-state.svg' %}" alt="No tickets found">
+                    <img src="{% static 'tickets/images/empty-state.svg' %}" alt="No queries found">
                     <p>
                         {% if open_count == 0 %}
                             There are no open queries.
                         {% elif request.GET.status == 'active' %}
-                            You have no active tickets.
+                            You have no active queries.
                         {% elif closed_count == 0 %}
-                            You have no closed tickets.
+                            You have no closed queries.
                         {% else %}
-                            No tickets match your search.
+                            No queriess match your search.
                         {% endif %}
                     </p>
                 </div>
