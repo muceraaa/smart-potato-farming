@@ -189,7 +189,7 @@ def deleteTicket(request, slug):
 
     if request.method == 'POST':
         ticket.delete()
-        messages.success(request, f'Ticket has been delete!')
+        messages.success(request, f'Query has been deleted!')
 
         # client redirected to their dashboard, same as engineer
         if request.user.user_type == 'client':
